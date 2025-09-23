@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply w-screen h-screen relative antialiased bg-[#0D0D11];
+    font-family: "ClashDisplay", sans-serif;
+    color: #9C95AC;
+  }
+  :root {
+    color-scheme: dark;
+  }
+  select {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    outline: none;
+  }
+  input {
+    box-shadow: inset 0px 2px 1px -1px rgba(255, 255, 255, 0.12),
+      inset 0px 0px 0px 1px rgba(255, 255, 255, 0.05);
+  }
+}
+
+@layer utilities {
+  .purple-button {
+    box-shadow: inset 0px 2px 1px -1px rgba(255, 255, 255, 0.12),
+      inset 0px 0px 0px 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .selected-option {
+    box-shadow: inset 0px 2px 1px -1px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 0px 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .grain::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("/images/grain.png");
+    background-size: cover;
+    opacity: 0.05;
+    z-index: -1;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist/GeistVF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeistMono";
+  src: url("/fonts/geist-mono/GeistMonoVF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ClashDisplay";
+  src: url("/fonts/ClashDisplay-Variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}

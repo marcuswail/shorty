@@ -29,7 +29,7 @@ app.listen(3001, async () => { //callback function get executes if listen start 
 
 // endpoint to pass long url
 // usiamo async perchè facciamo chiamate al db (usiamo wait)
-app.post('/shorten', async(req, res) => {
+app.post('/api/shorten', async(req, res) => {
     const {longUrl} = req.body;
     console.log('longUrl received: ' + longUrl);
 
@@ -42,13 +42,11 @@ app.post('/shorten', async(req, res) => {
             const shortUrl = encode(id);
             console.log('Generated short url is ' + shortUrl);
 
-            //build full link with domain
-
             await redisClient.hSet('urls', shortUrl, longUrl)
 
             res.status(200).json({
                 status: true,
-                data: shortUrl
+                data: "http://localhost:3001/"+ shortUrl
             })
         }catch(error){
             res.status(400).json({
@@ -69,7 +67,7 @@ app.post('/shorten', async(req, res) => {
 
 
 //da shortUrl (id) a longUrl (value)
-app.get('/:shortUrl', async(req, res) => {
+app.get('/api/:shortUrl', async(req, res) => {
     const shortUrl = req.params.shortUrl;
     console.log('shortUrl received is: '+ shortUrl);
     console.log('looking into redis...')
@@ -111,3 +109,24 @@ app.get('/:shortUrl', async(req, res) => {
         })
     }
 })
+
+// redirecter
+app.get('/:maybeShort', async function (req, res) {
+    const shortUrl = req.params.maybeShort;
+    console.log('redirecting:', shortUrl);
+    try {
+        const exists = await redisClient.hExists("urls", shortUrl);
+        if(!exists){
+            res.redirect('http://localhost:5173'); //home
+        } else {
+            // value exists
+            const longUrl = await redisClient.hGet("urls", shortUrl);
+            console.log('redirecting to:', longUrl);
+            res.redirect(longUrl);
+        }
+        
+    } catch (error) {
+        console.log('Redirect error:', error);
+        res.redirect('http://localhost:5173'); //home
+    }
+});
