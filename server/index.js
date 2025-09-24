@@ -75,8 +75,8 @@ app.post('/api/shorten', async(req, res) => {
 
             // if expire is setted, let's set it...
             if (expire){
-                console.log("User setted expire");
-                const seconds = 10;
+                const seconds = expire;
+                console.log("User setted expire for seconds "+ expire + ", in minutes "+ expire/60 + ", in hours " + expire/3600);
                 // HEXPIRE urls <seconds> FIELDS 1 <shortUrl>
                 const result = await redisClient.sendCommand([
                     'HEXPIRE',

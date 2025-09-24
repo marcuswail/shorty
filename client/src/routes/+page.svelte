@@ -10,6 +10,8 @@
   let loading2 = false; // se stiamo elaborando
   let showOptions = false;
   let expireEnabled = false; // toggle per expire after 24h
+  let expireAmount = 0;
+  $: expireEnabled = expireAmount > 0;
   
   // ridimensiona in automatico la textarea
   function autoResize() {
@@ -37,12 +39,12 @@
       if (expireEnabled){
         body = JSON.stringify({
           "longUrl" : longUrl,
-          "expire" : true
+          "expire" : expireAmount
         })
       }else{
         body = JSON.stringify({
           "longUrl" : longUrl,
-          "expire" : false
+          "expire" : 0
         })
       }
       const response = await fetch("http://localhost:3001/api/shorten", {
@@ -135,7 +137,7 @@
       autocomplete="off"
       autocapitalize="off"
       placeholder="enter you loong url..."
-      class="caret-[#845FEE] overflow-y-auto min-h-[20px] text-sm w-full font-medium font-mono text-primary bg-transparent selection:bg-[#673CE3]/50 placeholder:text-primary/60 focus:outline-none resize-none"
+      class="caret-[#00BFFF] overflow-y-auto min-h-[20px] text-sm w-full font-medium font-mono text-primary bg-transparent selection:bg-[#1E90FF]/50 placeholder:text-primary/60 focus:outline-none resize-none"
     ></textarea>
 
     <!-- Pulsante e opzioni sulla stessa riga -->
@@ -154,7 +156,7 @@
           class="w-full text-sm font-semibold active:translate-y-[2px] transition rounded-l-lg rounded-r-sm py-2
                 {loading1 || longUrl === '' 
                   ? 'bg-[#30303A]/50 text-[#9C95AC]/60 cursor-default' 
-                  : 'purple-button bg-[#673CE3] hover:bg-[#774BF3] text-white'}"
+                  : 'blue-button bg-[#1E90FF] hover:bg-[#4A9EFF] text-white'}"
         >
           {loading1 ? 'loading...' : 'generate'}
         </button>
@@ -187,11 +189,16 @@
           <span class="text-white text-sm font-semibold whitespace-nowrap">Expires After:</span>
           <div class="bg-[#2D2A3D] flex selected-option text-white text-sm rounded-md relative min-w-[120px]">
             <select 
-              class="px-2.5 pr-7 py-1 bg-transparent text-white w-full custom-select" 
-              bind:value={expireEnabled}
+              class="px-2.5 pr-7 py-1 bg-transparent text-white w-full custom-select"
+              bind:value={expireAmount}
             >
-              <option value={false}>No</option>
-              <option value={true}>24 hours</option>
+              <option value={0}>No expire</option>
+              <option value={300}>5 minutes</option>
+              <option value={600}>10 minutes</option>
+              <option value={1800}>30 minutes</option>
+              <option value={3600}>1 hour</option>
+              <option value={28800}>8 hours</option>
+              <option value={86400}>24 hours</option>
             </select>
             
             <!-- Icona freccia -->
@@ -214,7 +221,7 @@
       autocomplete="off"
       autocapitalize="off"
       placeholder="enter you short url..."
-      class="caret-[#845FEE] overflow-y-auto min-h-[20px] text-sm w-full font-medium font-mono text-primary bg-transparent selection:bg-[#673CE3]/50 placeholder:text-primary/60 focus:outline-none resize-none mt-40"
+      class="caret-[#00BFFF] overflow-y-auto min-h-[20px] text-sm w-full font-medium font-mono text-primary bg-transparent selection:bg-[#1E90FF]/50 placeholder:text-primary/60 focus:outline-none resize-none mt-40"
     ></textarea>
      
       <!-- Secondo pulsante sotto -->
@@ -232,7 +239,7 @@
            class="w-full text-sm font-semibold active:translate-y-[2px] transition rounded-lg py-2
                  {loading2 || shortUrl === '' 
                    ? 'bg-[#30303A]/50 text-[#9C95AC]/60 cursor-default' 
-                   : 'purple-button bg-[#673CE3] hover:bg-[#774BF3] text-white'}"
+                   : 'blue-button bg-[#1E90FF] hover:bg-[#4A9EFF] text-white'}"
           >
            {loading2 ? 'loading...' : 'get long url back'}
           </button>
