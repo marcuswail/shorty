@@ -33,14 +33,24 @@
     }, 500);
 
     try {
+      let body;
+      if (expireEnabled){
+        body = JSON.stringify({
+          "longUrl" : longUrl,
+          "expire" : true
+        })
+      }else{
+        body = JSON.stringify({
+          "longUrl" : longUrl,
+          "expire" : false
+        })
+      }
       const response = await fetch("http://localhost:3001/api/shorten", {
         headers: {
         'Content-Type': 'application/json',
         },
         method: "POST",
-        body: JSON.stringify({
-          "longUrl" : longUrl
-        })  
+        body: body
       })
       const data = await response.json();
       if(response.ok){
@@ -50,7 +60,6 @@
       
     } catch (error) {
         console.log(error);
-      
     }
   }
 

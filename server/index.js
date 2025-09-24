@@ -30,7 +30,7 @@ app.listen(3001, async () => { //callback function get executes if listen start 
 // endpoint to pass long url
 // usiamo async perchè facciamo chiamate al db (usiamo wait)
 app.post('/api/shorten', async(req, res) => {
-    const {longUrl} = req.body;
+    const { longUrl, expire } = req.body;
     console.log('longUrl received: ' + longUrl);
 
     if(longUrl){
@@ -48,6 +48,29 @@ app.post('/api/shorten', async(req, res) => {
                 status: true,
                 data: "http://localhost:3001/"+ shortUrl
             })
+
+            // if expire is setted, let's set it...
+            if (expire){
+                console.log("User setted expire");
+                const seconds = 10;
+                // HEXPIRE urls <seconds> FIELDS 1 <shortUrl>
+                const result = await redisClient.sendCommand([
+                    'HEXPIRE',
+                    'urls',
+                    seconds.toString(),
+                    'FIELDS',
+                    '1',
+                    shortUrl,
+                ]);
+                console.log("Risultato HEXPIRE:", result);
+                const vals = await redisClient.hGetAll('urls');
+                console.log("Hash prima expire:", vals);
+
+                setTimeout(async () => {
+                    const vals = await redisClient.hGetAll('urls');
+                    console.log("Hash dopo expire:", vals);
+                }, (seconds + 2) * 1000);
+            }
         }catch(error){
             res.status(400).json({
                 status: false,
