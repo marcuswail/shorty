@@ -27,6 +27,22 @@ app.listen(3001, async () => { //callback function get executes if listen start 
     console.log("Server up and running");
 });
 
+
+function isValidURL(url) {
+  try {
+    // se manca lo schema, aggiunge "http://"
+    const prefixed = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//)
+      ? url
+      : `http://${url}`;
+
+    new URL(prefixed); // se non è valido, lancia errore
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+
 // endpoint to pass long url
 // usiamo async perchè facciamo chiamate al db (usiamo wait)
 app.post('/api/shorten', async(req, res) => {
@@ -36,6 +52,14 @@ app.post('/api/shorten', async(req, res) => {
     if(longUrl){
         // we get the long url
         // to encode the url, we use a number as "seed". We get this number from redis
+
+        //if longUrl is missing http, we add it
+        if(!isValidURL(longUrl)){
+            res.status(400).json({
+                status: false,
+                error: 'Invalid URL'
+            })
+        }
         try{
             const id = await redisClient.incr('globalCounter');
             console.log('redis ID is now: ' + id);
@@ -119,7 +143,7 @@ app.get('/api/:shortUrl', async(req, res) => {
             console.log(error);
             res.status(400).json({
                 status: false,  
-                error: "Not an URLaa",
+                error: "Not an URL",
             })
         }
 

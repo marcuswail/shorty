@@ -11,6 +11,8 @@
   :root {
     color-scheme: dark;
   }
+
+  
   select {
     appearance: none;
     background-color: transparent;

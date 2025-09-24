@@ -55,6 +55,8 @@
       const data = await response.json();
       if(response.ok){
         generateShortUrl = data.data;
+      }else {
+        generateShortUrl = "Not valid :( check your long URL"
       }
       console.log('shortUrl generato ricevuto:', data.data);
       
@@ -73,8 +75,8 @@
     }, 500);
 
     try {
-      shortUrl = shortUrl.split("/").pop() ?? shortUrl;
-      const response = await fetch("http://localhost:3001/api/" + shortUrl, {
+      const cleanShortUrl = shortUrl.split("/").pop() ?? shortUrl;
+      const response = await fetch("http://localhost:3001/api/" + cleanShortUrl, {
         method: "GET",
       })
       console.log(response);
@@ -90,10 +92,7 @@
         console.log(error)
       
     }
-    
   }
-
-  
 
   function toggleOptions() {
     showOptions = !showOptions;
@@ -145,9 +144,9 @@
       <div class="flex gap-1 flex-1">
         {#if generateShortUrl}
           <!-- Mostra il risultato invece del pulsante -->
-          <div class="w-full text-sm font-medium py-2 px-4 text-green-400 bg-green-900/20 border border-green-500/30 px-4 py-2 rounded">
-            {generateShortUrl}
-          </div>
+            <div class="w-full text-sm font-medium py-2 px-4 rounded-lg {generateShortUrl === 'Not valid :( check your long URL' ? 'text-red-400 bg-red-900/20 border border-red-500/30' : 'text-green-400 bg-green-900/20 border border-green-500/30 px-4 py-2 rounded'}">
+              {generateShortUrl}
+            </div>
         {:else}
         <button
           on:click={handleSubmitShorten}
